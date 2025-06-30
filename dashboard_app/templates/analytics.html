@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>CSV Data Analytics Dashboard</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+
+        h1,
+        h2 {
+            color: #2c3e50;
+        }
+
+        .section {
+            margin-top: 40px;
+        }
+
+        .plots img {
+            max-width: 600px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            padding: 5px;
+        }
+
+        .grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .grid img {
+            width: 45%;
+        }
+
+        .stat-table {
+            overflow-x: auto;
+            border: 1px solid #ddd;
+        }
+
+        .stat-table table {
+            border-collapse: collapse;
+            width: 100%;
+        }
+
+        .stat-table th,
+        .stat-table td {
+            border: 1px solid #ccc;
+            padding: 8px;
+        }
+
+        form {
+            margin-bottom: 30px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <h1>CSV Analytics Dashboard</h1>
+
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <input type="file" name="csv_file" accept=".csv" required>
+        <button type="submit">Upload</button>
+    </form>
+
+    {% if shape %}
+    <div class="section">
+        <h2>Basic Information</h2>
+        <p><strong>Shape:</strong> {{ shape }}</p>
+        <p><strong>Columns:</strong> {{ columns }}</p>
+    </div>
+
+    <div class="section stat-table">
+        <h2>Descriptive Statistics</h2>
+        {{ description|safe }}
+    </div>
+
+    {% if plot_paths.histograms %}
+    <div class="section">
+        <h2>Histograms</h2>
+        <div class="grid plots">
+            {% for img in plot_paths.histograms %}
+            <img src="{{ MEDIA_URL }}{{ img }}" alt="Histogram">
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+
+    {% if plot_paths.boxplots %}
+    <div class="section">
+        <h2>Box Plots</h2>
+        <div class="grid plots">
+            {% for img in plot_paths.boxplots %}
+            <img src="{{ MEDIA_URL }}{{ img }}" alt="Boxplot">
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+
+    {% if plot_paths.heatmap %}
+    <div class="section">
+        <h2>Correlation Heatmap</h2>
+        <div class="plots">
+            <img src="{{ MEDIA_URL }}{{ plot_paths.heatmap }}" alt="Heatmap">
+        </div>
+    </div>
+    {% endif %}
+
+    {% if plot_paths.pairplot %}
+    <div class="section">
+        <h2>Pair Plot</h2>
+        <div class="plots">
+            <img src="{{ MEDIA_URL }}{{ plot_paths.pairplot }}" alt="Pairplot">
+        </div>
+    </div>
+    {% endif %}
+
+    {% if plot_paths.categorical %}
+    <div class="section">
+        <h2>Categorical Plots</h2>
+        <div class="grid plots">
+            {% for img in plot_paths.categorical %}
+            <img src="{{ MEDIA_URL }}{{ img }}" alt="Categorical">
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+
+    {% endif %}
+
+</body>
+
+</html>
